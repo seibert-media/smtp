@@ -6,7 +6,7 @@ opts=(
 	dc_other_hostnames ''
 	dc_relay_nets "$(ip addr show dev eth0 | awk '$1 == "inet" { print $2 }')"
 	dc_eximconfig_configtype 'smarthost'
-	dc_smarthost 'iredmail.mailfolder.org:465'
+	dc_smarthost 'iredmail.mailfolder.org:25'
 )
 
 set-exim4-update-conf "${opts[@]}"

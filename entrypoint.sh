@@ -7,6 +7,7 @@ opts=(
 	dc_relay_nets "$(ip addr show dev eth0 | awk '$1 == "inet" { print $2 }')"
 	dc_eximconfig_configtype 'smarthost'
 	dc_smarthost 'iredmail.mailfolder.org:25'
+	dc_relay_domains 'rocketnews.de'
 )
 
 set-exim4-update-conf "${opts[@]}"

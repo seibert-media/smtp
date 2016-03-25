@@ -7,7 +7,9 @@ SERVER_HOSTNAME=${SERVER_HOSTNAME:-'smtp.default.svc.cluster.local'}
 DOMAIN=${DOMAIN:-'default.svc.cluster.local'}
 RELAY_NETWORKS=${RELAY_NETWORKS:-'192.168.0.0/16 127.0.0.0/8'}
 
-echo "nameserver 172.16.30.1" > /var/spool/postfix/etc/resolv.conf
+if [ -n "${NAMESERVER}" ]; then
+	echo "nameserver ${NAMESERVER}" > /var/spool/postfix/etc/resolv.conf
+fi
 
 #Comment default mydestination, we will set it bellow
 sed -i -e '/mydestination/ s/^#*/#/' /etc/postfix/main.cf

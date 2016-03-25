@@ -1,18 +1,19 @@
 #!/bin/bash
 set -e
 
-smtp_host=${SMTP_HOST:-'iredmail.mailfolder.org'}
-smtp_port=${SMTP_PORT:-'25'}
+SMTP_HOST=${SMTP_HOST:-'iredmail.mailfolder.org'}
+SMTP_PORT=${SMTP_PORT:-'25'}
+SERVER_HOSTNAME=${SERVER_HOSTNAME:-'smtp.default.svc.cluster.local'}
+DOMAIN=${DOMAIN:-'default.svc.cluster.local'}
 
-opts=(
-	dc_local_interfaces '0.0.0.0 ; ::0'
-	dc_other_hostnames ''
-	dc_relay_nets "10.101.0.0/16:10.102.0.0/16:$(ip addr show dev eth0 | awk '$1 == "inet" { print $2 }')"
-	dc_eximconfig_configtype 'smarthost'
-	dc_smarthost "${smtp_host}:${smtp_port}"
-	dc_relay_domains ''
-)
+#Comment default mydestination, we will set it bellow
+sed -i -e '/mydestination/ s/^#*/#/' /etc/postfix/main.cf
+sed -i -e 's/inet_interfaces = localhost/inet_interfaces = all/g' /etc/postfix/main.cf
 
-set-exim4-update-conf "${opts[@]}"
+echo "myhostname=${SERVER_HOSTNAME}"  >> /etc/postfix/main.cf
+echo "mydomain=${DOMAIN}"  >> /etc/postfix/main.cf
+echo 'mydestination=$myhostname'  >> /etc/postfix/main.cf
+echo 'myorigin=$mydomain'  >> /etc/postfix/main.cf
+echo "relayhost = [$SMTP_HOST]:${SMTP_PORT}" >> /etc/postfix/main.cf
 
 exec "$@"

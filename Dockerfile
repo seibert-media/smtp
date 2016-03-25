@@ -6,14 +6,15 @@ RUN locale-gen en_US.UTF-8
 
 RUN set -x \
     && apt-get update --quiet \
-    && apt-get install --quiet --yes --no-install-recommends exim4-daemon-light \
+    && apt-get install --quiet --yes --no-install-recommends postfix supervisor bsd-mailx \
     && apt-get clean
 
+ADD entrypoint.sh /usr/local/bin/
+ADD postfix.conf /etc/supervisor/conf.d/
+RUN newaliases
 
-COPY set-exim4-update-conf.sh /usr/local/bin/set-exim4-update-conf
-COPY entrypoint.sh /usr/local/bin/
 ENTRYPOINT ["entrypoint.sh"]
 
 EXPOSE 25
 
-CMD ["exim", "-bd", "-v"]
+CMD supervisord --nodaemon -c /etc/supervisor/supervisord.conf

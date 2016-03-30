@@ -9,12 +9,12 @@ RUN set -x \
     && apt-get install --quiet --yes --no-install-recommends postfix supervisor bsd-mailx \
     && apt-get clean
 
-ADD entrypoint.sh /usr/local/bin/
 ADD postfix.conf /etc/supervisor/conf.d/
 RUN newaliases
 
-ENTRYPOINT ["entrypoint.sh"]
-
 EXPOSE 25
+
+ADD entrypoint.sh /usr/local/bin/
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 
 CMD supervisord --nodaemon -c /etc/supervisor/supervisord.conf

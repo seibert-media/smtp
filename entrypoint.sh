@@ -3,8 +3,8 @@ set -e
 
 SMTP_HOST=${SMTP_HOST:-'iredmail.mailfolder.org'}
 SMTP_PORT=${SMTP_PORT:-'25'}
-SERVER_HOSTNAME=${SERVER_HOSTNAME:-'smtp.default.svc.cluster.local'}
-DOMAIN=${DOMAIN:-'default.svc.cluster.local'}
+SERVER_HOSTNAME=${SERVER_HOSTNAME:-'smtp'}
+DOMAIN=${DOMAIN:-'local'}
 RELAY_NETWORKS=${RELAY_NETWORKS:-'192.168.0.0/16 127.0.0.0/8'}
 
 if [ -n "${NAMESERVER}" ]; then

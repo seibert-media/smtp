@@ -1,4 +1,4 @@
-FROM ubuntu:14.04
+FROM ubuntu:16.04
 MAINTAINER Benjamin Borbe <bborbe@rocketnews.de>
 ENV HOME /root
 ENV LANG en_US.UTF-8

@@ -7,7 +7,7 @@ RUN locale-gen en_US.UTF-8
 RUN set -x \
 	&& DEBIAN_FRONTEND=noninteractive apt-get update --quiet \
 	&& DEBIAN_FRONTEND=noninteractive apt-get upgrade --quiet --yes \
-	&& DEBIAN_FRONTEND=noninteractive apt-get install --quiet --yes --no-install-recommends postfix supervisor bsd-mailx \
+	&& DEBIAN_FRONTEND=noninteractive apt-get install --quiet --yes --no-install-recommends apt-transport-https ca-certificates postfix supervisor bsd-mailx \
 	&& DEBIAN_FRONTEND=noninteractive apt-get autoremove --yes \
 	&& DEBIAN_FRONTEND=noninteractive apt-get clean
 

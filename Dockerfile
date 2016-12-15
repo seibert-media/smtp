@@ -1,22 +1,13 @@
-FROM ubuntu:16.04
+FROM alpine:3.4
 MAINTAINER Benjamin Borbe <bborbe@rocketnews.de>
-ENV HOME /root
-ENV LANG en_US.UTF-8
-RUN locale-gen en_US.UTF-8
 
-RUN set -x \
-	&& DEBIAN_FRONTEND=noninteractive apt-get update --quiet \
-	&& DEBIAN_FRONTEND=noninteractive apt-get upgrade --quiet --yes \
-	&& DEBIAN_FRONTEND=noninteractive apt-get install --quiet --yes --no-install-recommends apt-transport-https ca-certificates postfix supervisor bsd-mailx \
-	&& DEBIAN_FRONTEND=noninteractive apt-get autoremove --yes \
-	&& DEBIAN_FRONTEND=noninteractive apt-get clean
+RUN apk add --update postfix ca-certificates supervisor rsyslog bash && rm -rf /var/cache/apk/*
 
-ADD postfix.conf /etc/supervisor/conf.d/
-RUN newaliases
-
-EXPOSE 25
-
-ADD entrypoint.sh /usr/local/bin/
+ADD files/supervisord.conf /etc/supervisord.conf
+ADD files/rsyslog.conf /etc/rsyslog.conf
+ADD files/entrypoint.sh /usr/local/bin/entrypoint.sh
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 
-CMD supervisord --nodaemon -c /etc/supervisor/supervisord.conf
+EXPOSE 25 587
+
+CMD ["supervisord", "-c", "/etc/supervisord.conf"]

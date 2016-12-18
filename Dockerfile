@@ -3,9 +3,9 @@ MAINTAINER Benjamin Borbe <bborbe@rocketnews.de>
 
 RUN apk add --update postfix ca-certificates supervisor rsyslog bash && rm -rf /var/cache/apk/*
 
-ADD files/supervisord.conf /etc/supervisord.conf
-ADD files/rsyslog.conf /etc/rsyslog.conf
-ADD files/entrypoint.sh /usr/local/bin/entrypoint.sh
+COPY files/supervisord.conf /etc/supervisord.conf
+COPY files/rsyslog.conf /etc/rsyslog.conf
+COPY files/entrypoint.sh /usr/local/bin/entrypoint.sh
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 
 EXPOSE 25 587

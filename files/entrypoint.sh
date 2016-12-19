@@ -9,6 +9,8 @@ ulimit -n 8192
 
 if [ "$1" = 'supervisord' ]; then
 
+	chown root: /var/spool/postfix /var/spool/postfix/pid
+
 	# Disable SMTPUTF8, because libraries (ICU) are missing in alpine
 	postconf -e smtputf8_enable=no
 
@@ -33,26 +35,27 @@ if [ "$1" = 'supervisord' ]; then
 	fi
 
 	# Set up a relay host, if needed
-	if [[ ! -z "$RELAYHOST" ]]; then
-		postconf -e relayhost=$RELAYHOST
+	if [ ! -z "$RELAY_SMTP_SERVER" ]; then
+		postconf -e "relayhost = [$RELAY_SMTP_SERVER]:$RELAY_SMTP_PORT"
+
+		if [ "$RELAY_SMTP_TLS" = 'true' ]; then
+			postconf -e "smtp_use_tls=yes"
+		fi
+
+		if [ -n "$RELAY_SMTP_USERNAME" ] && [ -n "$RELAY_SMTP_PASSWORD" ]; then
+			postconf -e "smtp_sasl_auth_enable = yes"
+			postconf -e "smtp_sasl_password_maps = hash:/etc/postfix/sasl_passwd"
+			postconf -e "smtp_sasl_security_options = noanonymous"
+			echo "[$RELAY_SMTP_SERVER]:$RELAY_SMTP_PORT $RELAY_SMTP_USERNAME:$RELAY_SMTP_PASSWORD" >> /etc/postfix/sasl_passwd
+			postmap hash:/etc/postfix/sasl_passwd
+		fi
 	else
 		postconf -# relayhost
 	fi
 
-	# Set up my networks to list only networks in the local loopback range
-	#network_table=/etc/postfix/network_table
-	#touch $network_table
-	#echo "127.0.0.0/8    any_value" >  $network_table
-	#echo "10.0.0.0/8     any_value" >> $network_table
-	#echo "172.16.0.0/12  any_value" >> $network_table
-	#echo "192.168.0.0/16 any_value" >> $network_table
-	## Ignore IPv6 for now
-	##echo "fd00::/8" >> $network_table
-	#postmap $network_table
-	#postconf -e mynetworks=hash:$network_table
-
-	if [[ ! -z "$MYNETWORKS" ]]; then
-					postconf -e relayhost=$MYNETWORKS
+	# Set up allowed networks for relay
+	if [[ ! -z "$ALLOWED_NETWORKS" ]]; then
+					postconf -e relayhost=$ALLOWED_NETWORKS
 	else
 					postconf -e "mynetworks=127.0.0.0/8,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16"
 	fi

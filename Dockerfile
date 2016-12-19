@@ -6,8 +6,17 @@ RUN apk add --update postfix ca-certificates supervisor rsyslog bash && rm -rf /
 COPY files/supervisord.conf /etc/supervisord.conf
 COPY files/rsyslog.conf /etc/rsyslog.conf
 COPY files/entrypoint.sh /usr/local/bin/entrypoint.sh
-ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
+
+ENV HOSTNAME = ""
+ENV RELAY_SMTP_SERVER = ""
+ENV RELAY_SMTP_PORT = ""
+ENV RELAY_SMTP_TLS = false
+ENV RELAY_SMTP_USERNAME = ""
+ENV RELAY_SMTP_PASSWORD = ""
+ENV ALLOWED_NETWORKS = ""
+ENV ALLOWED_SENDER_DOMAINS = ""
 
 EXPOSE 25 587
 
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 CMD ["supervisord", "-c", "/etc/supervisord.conf"]

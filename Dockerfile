@@ -1,7 +1,7 @@
 FROM alpine:3.4
 MAINTAINER Benjamin Borbe <bborbe@rocketnews.de>
 
-RUN apk add --update postfix ca-certificates supervisor rsyslog bash && rm -rf /var/cache/apk/*
+RUN apk add --update ca-certificates postfix supervisor rsyslog bash && rm -rf /var/cache/apk/*
 
 COPY files/supervisord.conf /etc/supervisord.conf
 COPY files/rsyslog.conf /etc/rsyslog.conf

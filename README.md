@@ -1,4 +1,4 @@
-# SMTP Dockerfile
+# SMTP
 
 ## Copyright and license
 

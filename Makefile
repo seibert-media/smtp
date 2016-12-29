@@ -1,10 +1,12 @@
+VERSION ?= 1.0.0
+
 default: build
 
 clean:
-	docker rmi bborbe/smtp
+	docker rmi bborbe/smtp:$(VERSION)
 
 build:
-	docker build --no-cache --rm=true -t bborbe/smtp .
+	docker build --build-arg VERSION=$(VERSION) --no-cache --rm=true -t bborbe/smtp:$(VERSION) .
 
 run:
 	docker run \
@@ -15,13 +17,13 @@ run:
 	-e RELAY_SMTP_PORT=25 \
 	-e ALLOWED_SENDER_DOMAINS="" \
 	-e ALLOWED_NETWORKS="" \
-	bborbe/smtp:latest
+	bborbe/smtp:$(VERSION)
 
 shell:
-	docker run -i -t bborbe/smtp:latest /bin/bash
+	docker run -i -t bborbe/smtp:$(VERSION) /bin/bash
 
 upload:
-	docker push bborbe/smtp
+	docker push bborbe/smtp:$(VERSION)
 
 
 

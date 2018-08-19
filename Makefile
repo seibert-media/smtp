@@ -1,5 +1,7 @@
-VERSION ?= latest
 REGISTRY ?= docker.io
+ifeq ($(VERSION),)
+	VERSION := $(shell git describe --tags `git rev-list --tags --max-count=1`)
+endif
 
 default: build
 
@@ -7,7 +9,7 @@ clean:
 	docker rmi $(REGISTRY)/bborbe/smtp:$(VERSION)
 
 build:
-	docker build --build-arg VERSION=$(VERSION) --no-cache --rm=true -t $(REGISTRY)/bborbe/smtp:$(VERSION) .
+	docker build --no-cache --rm=true -t $(REGISTRY)/bborbe/smtp:$(VERSION) .
 
 run:
 	docker run \

@@ -1,6 +1,5 @@
 FROM alpine:3.5
 MAINTAINER Benjamin Borbe <bborbe@rocketnews.de>
-ARG VERSION
 
 RUN apk add --update ca-certificates postfix supervisor rsyslog bash && rm -rf /var/cache/apk/*
 

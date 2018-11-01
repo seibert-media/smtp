@@ -42,7 +42,7 @@ if [ "$1" = 'supervisord' ]; then
 			postconf -e "smtp_use_tls=yes"
 		fi
 
-		if [ -n "$RELAY_SMTP_USERNAME" ] && [ -n "$RELAY_SMTP_PASSWORD" ]; then
+		if [ ! -z "$RELAY_SMTP_USERNAME" ] && [ ! -z "$RELAY_SMTP_PASSWORD" ]; then
 			postconf -e "smtp_sasl_auth_enable = yes"
 			postconf -e "smtp_sasl_password_maps = hash:/etc/postfix/sasl_passwd"
 			postconf -e "smtp_sasl_security_options = noanonymous"
@@ -55,7 +55,7 @@ if [ "$1" = 'supervisord' ]; then
 
 	# Set up allowed networks for relay
 	if [[ ! -z "$ALLOWED_NETWORKS" ]]; then
-		postconf -e relayhost=$ALLOWED_NETWORKS
+		postconf -e "mynetworks=$ALLOWED_NETWORKS"
 	else
 		postconf -e "mynetworks=127.0.0.0/8,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16"
 	fi

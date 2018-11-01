@@ -1,15 +1,36 @@
 REGISTRY ?= docker.io
-ifeq ($(VERSION),)
-	VERSION := $(shell git describe --tags `git rev-list --tags --max-count=1`)
-endif
+IMAGE    ?= bborbe/smtp
+VERSION  ?= latest
+VERSIONS = $(VERSION)
+
+VERSIONS += $(shell git fetch --tags; git tag -l --points-at HEAD)
 
 default: build
 
-clean:
-	docker rmi $(REGISTRY)/bborbe/smtp:$(VERSION)
+all: build upload clean
 
 build:
-	docker build --no-cache --rm=true -t $(REGISTRY)/bborbe/smtp:$(VERSION) .
+	@tags=""; \
+	for i in $(VERSIONS); do \
+		tags="$$tags -t $(REGISTRY)/$(IMAGE):$$i"; \
+	done; \
+	echo "docker build --no-cache --rm=true $$tags ."; \
+	docker build --no-cache --rm=true $$tags .
+
+clean:
+	@for i in $(VERSIONS); do \
+		echo "docker rmi $(REGISTRY)/$(IMAGE):$$i"; \
+		docker rmi $(REGISTRY)/$(IMAGE):$$i || true; \
+	done
+
+upload:
+	@for i in $(VERSIONS); do \
+		echo "docker push $(REGISTRY)/$(IMAGE):$$i"; \
+		docker push $(REGISTRY)/$(IMAGE):$$i; \
+	done
+
+versions:
+	@for i in $(VERSIONS); do echo $$i; done;
 
 run:
 	docker run \
@@ -20,15 +41,5 @@ run:
 	-e RELAY_SMTP_PORT=25 \
 	-e ALLOWED_SENDER_DOMAINS="" \
 	-e ALLOWED_NETWORKS="" \
-	$(REGISTRY)/bborbe/smtp:$(VERSION)
-
-shell:
-	docker run -i -t $(REGISTRY)/bborbe/smtp:$(VERSION) /bin/bash
-
-upload:
-	docker push $(REGISTRY)/bborbe/smtp:$(VERSION)
-
-
-
-
+	$(REGISTRY)/$(IMAGE):$(VERSION)
 

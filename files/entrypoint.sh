@@ -55,9 +55,9 @@ if [ "$1" = 'supervisord' ]; then
 
 	# Set up allowed networks for relay
 	if [[ ! -z "$ALLOWED_NETWORKS" ]]; then
-					postconf -e relayhost=$ALLOWED_NETWORKS
+		postconf -e relayhost=$ALLOWED_NETWORKS
 	else
-					postconf -e "mynetworks=127.0.0.0/8,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16"
+		postconf -e "mynetworks=127.0.0.0/8,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16"
 	fi
 
 	# Split with space

@@ -27,6 +27,14 @@ if [ "$1" = 'supervisord' ]; then
 	postconf -e smtpd_helo_required=yes
 	postconf -e "smtpd_helo_restrictions=permit_mynetworks,reject_invalid_helo_hostname,permit"
 
+	if [ ! -z "$SMTP_USERNAME" ] && [ ! -z "$SMTP_PASSWORD" ]; then
+		echo -n "$SMTP_PASSWORD" | saslpasswd2 -c -u mysasldomain -a smtp -p "$SMTP_USERNAME"
+		chown postfix /etc/sasldb2
+		postconf -e 'smtpd_sasl_auth_enable = yes'
+		postconf -e 'smtpd_sasl_path = smtpd'
+		postconf -e 'smtpd_sasl_local_domain = mysasldomain'
+	fi
+
 	# Set up host name
 	if [[ ! -z "$HOSTNAME" ]]; then
 		postconf -e myhostname=$HOSTNAME

@@ -1,7 +1,7 @@
 FROM alpine:3.8
 MAINTAINER Benjamin Borbe <bborbe@rocketnews.de>
 
-RUN apk add --update ca-certificates postfix supervisor rsyslog bash && rm -rf /var/cache/apk/*
+RUN apk add --update ca-certificates postfix supervisor rsyslog bash cyrus-sasl && rm -rf /var/cache/apk/*
 
 COPY files/supervisord.conf /etc/supervisord.conf
 COPY files/rsyslog.conf /etc/rsyslog.conf
@@ -15,6 +15,8 @@ ENV RELAY_SMTP_USERNAME = ""
 ENV RELAY_SMTP_PASSWORD = ""
 ENV ALLOWED_NETWORKS = ""
 ENV ALLOWED_SENDER_DOMAINS = ""
+ENV SMTP_USERNAME = ""
+ENV SMTP_PASSWORD = ""
 
 EXPOSE 25 587
 

@@ -53,31 +53,21 @@ podTemplate(
 						notifyBitbucket()
 					}
 				}
-				stage('Trigger') {
-					timeout(time: 5, unit: 'MINUTES') {
-						env.TRIGGER = sh (script: "make trigger", returnStdout: true).trim()
-						echo "trigger = ${env.TRIGGER}"
-					}
-				}
 				stage('Build') {
-					if (env.TRIGGER == 'build' || env.BRANCH_NAME != 'master') {
-						timeout(time: 15, unit: 'MINUTES') {
-							sh "make build"
-						}
+					timeout(time: 15, unit: 'MINUTES') {
+						sh "make build"
 					}
 				}
 				stage('Upload') {
-					if (env.TRIGGER == 'build' && env.BRANCH_NAME == 'master') {
+					if (env.BRANCH_NAME == 'master') {
 						timeout(time: 15, unit: 'MINUTES') {
 							sh "make upload"
 						}
 					}
 				}
 				stage('Clean') {
-					if (env.TRIGGER == 'build' || env.BRANCH_NAME != 'master') {
-						timeout(time: 5, unit: 'MINUTES') {
-							sh "make clean"
-						}
+					timeout(time: 5, unit: 'MINUTES') {
+						sh "make clean"
 					}
 				}
 			}

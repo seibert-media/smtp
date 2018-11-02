@@ -1,5 +1,9 @@
 FROM alpine:3.8
-MAINTAINER Benjamin Borbe <bborbe@rocketnews.de>
+
+LABEL maintainer="//SEIBERT/MEDIA GmbH  <docker@seibert-media.net>"
+LABEL author="team-codeyard"
+LABEL type="public"
+LABEL versioning="subtag"
 
 RUN apk add --update ca-certificates postfix supervisor rsyslog bash cyrus-sasl && rm -rf /var/cache/apk/*
 
